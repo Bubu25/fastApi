@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
-from my_super_project.sql_app import models, schemas
+from projetStage.sql_app import models, schemas
 
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
-def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
+def get_user_by_nom(db: Session, nom:str):
+    return db.query(models.User).filter(models.User.nom == nom).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
@@ -15,7 +15,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
+    db_user = models.User(nom=user.nom, prenom=user.prenom,compteur=user.compteur)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
