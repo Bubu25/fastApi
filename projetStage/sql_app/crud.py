@@ -14,14 +14,21 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
+def get_user_update(db:Session, user_id:int, user: schemas.UserUpdate):
+    up=db.query(models.User).filter(models.User.id == user_id).first()
+    up=models.User(nom=user.nom, prenom=user.prenom, compteur=user.compteur)
+    db_user = up
+    db._update_impl(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return
+
 def create_user(db: Session, user: schemas.UserCreate):
     db_user = models.User(nom=user.nom, prenom=user.prenom,compteur=user.compteur)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return
-
-
 
 
 def get_items(db: Session, skip: int = 0, limit: int = 100):
