@@ -12,6 +12,7 @@ nombreSemaines=10
 #print(y)
 
 
+
 for i in range(1,nombreSemaines+1):
     z = random.choice(noms)
     print(f"semaine {i}, {z} paye son café")

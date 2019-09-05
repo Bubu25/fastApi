@@ -17,7 +17,6 @@ class ItemBase(BaseModel):
 class ItemCreate(ItemBase):
     pass
 
-
 class Item(ItemBase):
     #id: int
     owner_id: int
@@ -35,6 +34,8 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     pass
 
+class UserUpdate(UserBase):
+    pass
 
 class User(UserBase):
     id: int
