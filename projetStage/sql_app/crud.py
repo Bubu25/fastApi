@@ -19,7 +19,9 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    return
+
+
 
 
 def get_items(db: Session, skip: int = 0, limit: int = 100):

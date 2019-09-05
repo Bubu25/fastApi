@@ -1,4 +1,5 @@
 from typing import List
+import random
 import uvicorn
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -41,12 +42,15 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 @app.get("/users/", response_model=List[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
+    print(len(users),users[0].nom, users[0].items[0].Semaine_1)
     return users
 
 
 @app.get("/users/{user_id}", response_model=schemas.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
+    print(db_user.nom, db_user.prenom, db_user.compteur)
+
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
@@ -62,7 +66,41 @@ def create_item_for_user(
 @app.get("/items/", response_model=List[schemas.Item])
 def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     items = crud.get_items(db, skip=skip, limit=limit)
+    print(items[0].Semaine_1)
     return items
+
+@app.get("/selection")
+async def selection_user(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_users(db, skip=skip, limit=limit)
+    print(len(users), users[0].nom, users[0].items[0].Semaine_1)
+    nombreSemaine = 10
+    listNomUsers_S1=[]
+    listNomUsers_S2=[]
+    listNomUsers_S3=[]
+    listNomUsers_S4=[]
+    listNomUsers_S5=[]
+    listNomUsers_S6=[]
+    listNomUsers_S7=[]
+    listNomUsers_S8=[]
+    listNomUsers_S9=[]
+    listNomUsers_S10=[]
+
+    for u in users:
+        print(u.items[0].Semaine_1)
+        if u.items[0].Semaine_1==1:
+            listNomUsers_S1.append(u.nom)
+        user_S1=random.choice(listNomUsers_S1)
+
+    @app.put("/users/", response_model=List[schemas.User])
+    def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+        users = crud.get_users(db, skip=skip, limit=limit)
+        print(len(users), users[0].nom, users[0].items[0].Semaine_1)
+        return users
+    print(users[0].nom)
+
+
+    return f"le payeur de la première semaine est {user_S1}"
+
 
 
 uvicorn.run(app, port=8000, debug=True, access_log=False)
