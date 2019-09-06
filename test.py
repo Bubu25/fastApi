@@ -1,7 +1,9 @@
 dico={}
+dico2={}
 dico['nom']=2
 dico['prenom']=3
-print (dico)
+dico3=dico2.update(dico)
+print ("d",dico3)
 print(len(dico))
 list=[]
 for u in dico:

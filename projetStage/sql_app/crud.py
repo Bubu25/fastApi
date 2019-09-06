@@ -6,7 +6,7 @@ def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 def get_item(db: Session, user_id: int):
-    return db.query(models.Item).filter(models.Item.id == user_id).first()
+    return db.query(models.Item).filter(models.Item.owner_id == user_id).first()
 
 
 def get_user_by_nom(db: Session, nom:str):
@@ -21,7 +21,7 @@ def get_user_update(db:Session, user_id:int, user: schemas.UserUpdate):
     db.query(models.User).filter(models.User.id == user_id).first()
     up=models.User(nom=user.nom, prenom=user.prenom, compteur=user.compteur)
     db_user = up
-    db._u(db_user)
+    db._update_impl(db_user)
     db.commit()
     db.refresh(db_user)
     return
