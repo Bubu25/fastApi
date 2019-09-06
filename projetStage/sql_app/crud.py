@@ -5,6 +5,9 @@ from projetStage.sql_app import models, schemas
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
+def get_item(db: Session, user_id: int):
+    return db.query(models.Item).filter(models.Item.owner_id == user_id).first()
+
 
 def get_user_by_nom(db: Session, nom:str):
     return db.query(models.User).filter(models.User.nom == nom).first()
@@ -15,7 +18,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def get_user_update(db:Session, user_id:int, user: schemas.UserUpdate):
-    up=db.query(models.User).filter(models.User.id == user_id).first()
+    db.query(models.User).filter(models.User.id == user_id).first()
     up=models.User(nom=user.nom, prenom=user.prenom, compteur=user.compteur)
     db_user = up
     db._update_impl(db_user)
