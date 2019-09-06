@@ -16,3 +16,7 @@ i=0
 i+=2
 i-=2
 print(i)
+a='b'
+c='o'
+i=1
+print(a+str(i))
