@@ -94,170 +94,354 @@ async def selection_user(skip: int = 0, limit: int = 100, db: Session = Depends(
     print(len(users), users[0].nom, users[0].items[0].Semaine_1)
 
     nombreSemaines = 10
-    listNomUsers_S1=[]
-    listNomUsers_S2=[]
-    listNomUsers_S3=[]
-    listNomUsers_S4=[]
-    listNomUsers_S5=[]
-    listNomUsers_S6=[]
-    listNomUsers_S7=[]
-    listNomUsers_S8=[]
-    listNomUsers_S9=[]
-    listNomUsers_S10=[]
-    listePayeur=[]
-    cpt_User1=0
-    cpt_User2=0
-    cpt_User3=0
-    cpt_User4=0
-    cpt_User5=0
-    dico={}
-    cpt =0
-    i=0
-    dico={}
+    listNomUsers=[]
+    listePayeurs=[]
+
+    dicoCompteur={}
 
     for u in users:
-        dico[u.nom]=0
-    print(dico)
+        dicoCompteur[u.nom]=0 # dico avec le nom comm clé et le compteur coffee comme valeur
+    print(dicoCompteur)
 
+    i = 0  # indice associée au compteur coffee
+
+#### selection semaine 1
     for u in users:
-        if cpt!=0 and ((cpt % nombreSemaines) == 0 or (nombreSemaines % cpt) == 0):
-            i=+1
-        if u.items[0].Semaine_1==1 and dico[u.nom]==i: #### conditions qui vérifie si user est présent ou pas et
-            listNomUsers_S1.append(u.nom)
-    #if listNomUsers_S1 ==[]:
+        #### conditions qui vérifie si user est présent la semaine et si son compteur est inférieur
+        if u.items[0].Semaine_1==1 and dicoCompteur[u.nom]<=i:
+            listNomUsers.append(u.nom)
+    print(listNomUsers)
 
-    payeur_S1=random.choice(listNomUsers_S1)
-    dico[payeur_S1]=dico[payeur_S1]+1
-    dico_trie = sorted(dico.items(), reverse=True, key=operator.itemgetter(1))
+    payeur=random.choice(listNomUsers) # selection au hasard
+    dicoCompteur[payeur]=dicoCompteur[payeur]+1 # le compteur de user choisi s'incrémente de 1 dans le dicoCompteur
 
-    print(dico_trie, payeur_S1)
-    listePayeur.append(payeur_S1)
+    listePayeurs.append(payeur) #le nom user est rangé dans une liste
+    print(listePayeurs)
+    print(dicoCompteur)
     print(i)
-    cpt=+1
 
+    listNomUsers=[] #initialisation de la liste pour la prochaine sélectin
+
+####selection semaine 2
     for u in users:
-        #print(u.items[0].Semaine_2)
-        if cpt!=0 and ((cpt%nombreSemaines)==0 or (nombreSemaines%cpt)==0):
-            i=+1
-        if u.items[0].Semaine_2==1 and dico[u.nom]==i:
-            listNomUsers_S2.append(u.nom)
+        if u.items[0].Semaine_2==1 and dicoCompteur[u.nom]<=i:
+            listNomUsers.append(u.nom)
 
-    payeur_S2=random.choice(listNomUsers_S2)
-    dico[payeur_S2] = dico[payeur_S2] + 1
-    print(dico,payeur_S2)
-    listePayeur.append(payeur_S2)
+    ##si pas de Noms dans la liste i s'incrémente de +2 pour trouver user avec un compteur supérieur
+    if listNomUsers ==[]:
+        i+=2
+        for u in users:
+            if u.items[0].Semaine_2 == 1 and dicoCompteur[u.nom] <= i:
+                listNomUsers.append(u.nom)
+        i-=2
+
+
+    if listNomUsers!=[]:
+        payeur=random.choice(listNomUsers)
+        if payeur==listePayeurs[len(listePayeurs)-1] and len(listNomUsers)!=1: ## evite qu'un utilisateur paye 2 fois de suite
+            while payeur==listePayeurs[len(listePayeurs)-1]:
+                payeur=random.choice(listNomUsers)
+    else:
+        return "Semaine 2 pas de payeur, relancer le code"
+
+    dicoCompteur[payeur]=dicoCompteur[payeur]+1
+    listePayeurs.append(payeur)
+    print(listePayeurs)
+    print(dicoCompteur)
     print(i)
-    cpt=+1
 
+    ##si tous les users ont le même compteur, i s'incrémente de 1
+    listCompteurCoffee = []
+    for c in dicoCompteur:
+        cpt = dicoCompteur.get(c)
+        listCompteurCoffee.append(cpt)
+    if i not in listCompteurCoffee:
+        i +=1
+    listNomUsers = []
+
+####selection semaine 3
     for u in users:
-        #print(u.items[0].Semaine_3)
-        if cpt!=0 and ((cpt % nombreSemaines) == 0 or (nombreSemaines % cpt) == 0):
-            i=+1
-        if u.items[0].Semaine_3==1 and dico[u.nom]==i:
-            listNomUsers_S3.append(u.nom)
-    payeur_S3=random.choice(listNomUsers_S3)
-    dico[payeur_S3] = dico[payeur_S3] + 1
-    print(dico,payeur_S3)
-    listePayeur.append(payeur_S3)
+        if u.items[0].Semaine_3 == 1 and dicoCompteur[u.nom] <= i:
+            listNomUsers.append(u.nom)
+    print(listNomUsers)
+
+    if listNomUsers == []:
+        i+= 2
+        for u in users:
+            if u.items[0].Semaine_3 == 1 and dicoCompteur[u.nom] <= i:
+                listNomUsers.append(u.nom)
+        i-=2
+
+    if listNomUsers!=[]:
+        payeur=random.choice(listNomUsers)
+        if payeur==listePayeurs[len(listePayeurs)-1] and len(listNomUsers)!=1:
+            while payeur==listePayeurs[len(listePayeurs)-1]:
+                payeur=random.choice(listNomUsers)
+    else:
+        return "Semaine 3 pas de payeur, relancer le code"
+
+    dicoCompteur[payeur] = dicoCompteur[payeur] + 1
+    listePayeurs.append(payeur)
+    print(listePayeurs)
+    print(dicoCompteur)
     print(i)
-    cpt=+1
+    listCompteurCoffee = []
+    for c in dicoCompteur:
+        cpt = dicoCompteur.get(c)
+        listCompteurCoffee.append(cpt)
+    if i not in listCompteurCoffee:
+        i = +1
+    listNomUsers = []
+
+##### semaine 4
+    for u in users:
+        if u.items[0].Semaine_4 == 1 and dicoCompteur[u.nom] <= i:
+            listNomUsers.append(u.nom)
+    print(listNomUsers)
+
+    if listNomUsers == []:
+        i+=2
+        for u in users:
+            if u.items[0].Semaine_4 == 1 and dicoCompteur[u.nom] <= i:
+                listNomUsers.append(u.nom)
+        i-=2
+
+
+    if listNomUsers!=[]:
+        payeur=random.choice(listNomUsers)
+        if payeur==listePayeurs[len(listePayeurs)-1] and len(listNomUsers)!=1: ## evite qu'un utilisateur paye 2 fois de suite
+            while payeur==listePayeurs[len(listePayeurs)-1]:
+                payeur=random.choice(listNomUsers)
+    else:
+        return "Semaine 4 pas de payeur, relancer le code"
+
+    dicoCompteur[payeur] = dicoCompteur[payeur] + 1
+    listePayeurs.append(payeur)
+    print(listePayeurs)
+    print(dicoCompteur)
+    print(i)
+    listCompteurCoffee = []
+    for c in dicoCompteur:
+        cpt = dicoCompteur.get(c)
+        listCompteurCoffee.append(cpt)
+    if i not in listCompteurCoffee:
+        i+=1
+    listNomUsers = []
+
+####semaine 5
+    for u in users:
+        if u.items[0].Semaine_5 == 1 and dicoCompteur[u.nom] <= i:
+            listNomUsers.append(u.nom)
+    print(listNomUsers)
+
+    if listNomUsers == []:
+        i+=2
+        for u in users:
+            if u.items[0].Semaine_5== 1 and dicoCompteur[u.nom] <= i:
+                listNomUsers.append(u.nom)
+        i-=2
+
+
+    if listNomUsers!=[]:
+        payeur=random.choice(listNomUsers)
+        if payeur==listePayeurs[len(listePayeurs)-1] and len(listNomUsers)!=1: ## evite qu'un utilisateur paye 2 fois de suite
+            while payeur==listePayeurs[len(listePayeurs)-1]:
+                payeur=random.choice(listNomUsers)
+    else:
+        return "Semaine 6 pas de payeur, relancer le code"
+
+    dicoCompteur[payeur] = dicoCompteur[payeur] + 1
+    listePayeurs.append(payeur)
+    print(listePayeurs)
+    print(dicoCompteur)
+    print(i)
+    listCompteurCoffee = []
+    for c in dicoCompteur:
+        cpt = dicoCompteur.get(c)
+        listCompteurCoffee.append(cpt)
+    if i not in listCompteurCoffee:
+        i -=1
+    listNomUsers = []
+
+#### semaine 6
 
     for u in users:
-        #print(u.items[0].Semaine_4)
-        if cpt!=0 and ((cpt % nombreSemaines) == 0 or (nombreSemaines % cpt) == 0):
-            i=+1
-        if u.items[0].Semaine_4 == 1 and dico[u.nom]==i:
-            listNomUsers_S4.append(u.nom)
-    payeur_S4 = random.choice(listNomUsers_S4)
-    dico[payeur_S4] = dico[payeur_S4] + 1
-    print(dico, payeur_S4)
-    listePayeur.append(payeur_S4)
-    cpt = +1
+        if u.items[0].Semaine_6 == 1 and dicoCompteur[u.nom] <= i:
+            listNomUsers.append(u.nom)
+    print(listNomUsers)
+
+    if listNomUsers == []:
+        i +=2
+        for u in users:
+            if u.items[0].Semaine_6== 1 and dicoCompteur[u.nom] <= i:
+                listNomUsers.append(u.nom)
+        i-=2
+
+
+    if listNomUsers!=[]:
+        payeur=random.choice(listNomUsers)
+        if payeur==listePayeurs[len(listePayeurs)-1] and len(listNomUsers)!=1: ## evite qu'un utilisateur paye 2 fois de suite
+            while payeur==listePayeurs[len(listePayeurs)-1]:
+                payeur=random.choice(listNomUsers)
+    else:
+        return "Semaine 6 pas de payeur,relancer le code "
+
+    dicoCompteur[payeur] = dicoCompteur[payeur] + 1
+    listePayeurs.append(payeur)
+    print(listePayeurs)
+    print(dicoCompteur)
+    print(i)
+    listCompteurCoffee = []
+    for c in dicoCompteur:
+        cpt = dicoCompteur.get(c)
+        listCompteurCoffee.append(cpt)
+    if i not in listCompteurCoffee:
+        i -=1
+    listNomUsers = []
+
+##semaine 7
 
     for u in users:
-        #print(u.items[0].Semaine_5)
-        if cpt!=0 and ((cpt % nombreSemaines) == 0 or (nombreSemaines % cpt) == 0):
-            i=+1
-        if u.items[0].Semaine_5 == 1 and dico[u.nom]==i:
-            listNomUsers_S5.append(u.nom)
-    payeur_S5 = random.choice(listNomUsers_S5)
-    dico[payeur_S5] = dico[payeur_S5] + 1
-    print(dico,payeur_S5)
-    listePayeur.append(payeur_S5)
-    cpt = +1
+        if u.items[0].Semaine_7 == 1 and dicoCompteur[u.nom] <= i:
+            listNomUsers.append(u.nom)
+    print(listNomUsers)
 
+    if listNomUsers == []:
+        i += 2
+        for u in users:
+            if u.items[0].Semaine_7== 1 and dicoCompteur[u.nom] <= i:
+                listNomUsers.append(u.nom)
+        i-=2
+
+    if listNomUsers!=[]:
+        payeur=random.choice(listNomUsers)
+        if payeur==listePayeurs[len(listePayeurs)-1] and len(listNomUsers)!=1: ## evite qu'un utilisateur paye 2 fois de suite
+            while payeur==listePayeurs[len(listePayeurs)-1]:
+                payeur=random.choice(listNomUsers)
+    else:
+        return "Semaine 7 pas de payeur, relancer le code"
+
+    dicoCompteur[payeur] = dicoCompteur[payeur] + 1
+    listePayeurs.append(payeur)
+    print(listePayeurs)
+    print(dicoCompteur)
+    print(i)
+    listCompteurCoffee = []
+    for c in dicoCompteur:
+        cpt = dicoCompteur.get(c)
+        listCompteurCoffee.append(cpt)
+    if i not in listCompteurCoffee:
+        i +=1
+    listNomUsers = []
+
+##semaine 8
     for u in users:
-        #print(u.items[0].Semaine_6)
-        if cpt!=0 and ((cpt % nombreSemaines) == 0 or (nombreSemaines % cpt) == 0):
-            i=+1
-        if u.items[0].Semaine_6 == 1 and dico[u.nom]==i:
-            listNomUsers_S6.append(u.nom)
-    payeur_S6 = random.choice(listNomUsers_S6)
-    dico[payeur_S6] = dico[payeur_S6] + 1
-    print(dico,payeur_S6)
-    listePayeur.append(payeur_S6)
-    cpt = +1
+        if u.items[0].Semaine_8 == 1 and dicoCompteur[u.nom] <= i:
+            listNomUsers.append(u.nom)
+    print(listNomUsers)
 
+    if listNomUsers == []:
+        i +=2
+        for u in users:
+            if u.items[0].Semaine_8== 1 and dicoCompteur[u.nom] <= i:
+                listNomUsers.append(u.nom)
+        i-=2
+
+    if listNomUsers!=[]:
+        payeur=random.choice(listNomUsers)
+        if payeur==listePayeurs[len(listePayeurs)-1] and len(listNomUsers)!=1: ## evite qu'un utilisateur paye 2 fois de suite
+            while payeur==listePayeurs[len(listePayeurs)-1]:
+                payeur=random.choice(listNomUsers)
+    else:
+        return "Semaine 8 pas de payeur, relancer le code"
+
+    dicoCompteur[payeur] = dicoCompteur[payeur] + 1
+    listePayeurs.append(payeur)
+    print(listePayeurs)
+    print(dicoCompteur)
+    print(i)
+    listCompteurCoffee = []
+    for c in dicoCompteur:
+        cpt = dicoCompteur.get(c)
+        listCompteurCoffee.append(cpt)
+    if i not in listCompteurCoffee:
+        i +=1
+    listNomUsers = []
+
+####semaine 9
     for u in users:
-        #print(u.items[0].Semaine_7)
-        if cpt!=0 and ((cpt % nombreSemaines) == 0 or (nombreSemaines % cpt) == 0):
-            i=+1
-        if u.items[0].Semaine_7 == 1 and dico[u.nom]==i:
-            listNomUsers_S7.append(u.nom)
-    payeur_S7 = random.choice(listNomUsers_S7)
-    dico[payeur_S7] = dico[payeur_S7] + 1
-    print(dico, payeur_S7)
-    listePayeur.append(payeur_S7)
-    cpt = +1
+        if u.items[0].Semaine_9 == 1 and dicoCompteur[u.nom] <= i:
+            listNomUsers.append(u.nom)
+    print(listNomUsers)
 
+    if listNomUsers == []:
+        print(i)
+        i+=2
+        for u in users:
+            if u.items[0].Semaine_9== 1 and dicoCompteur[u.nom] <= i:
+                listNomUsers.append(u.nom)
+        i-=2
+        print(i)
+
+
+    if listNomUsers!=[]:
+        payeur=random.choice(listNomUsers)
+        if payeur==listePayeurs[len(listePayeurs)-1] and len(listNomUsers)!=1: ## evite qu'un utilisateur paye 2 fois de suite
+            while payeur==listePayeurs[len(listePayeurs)-1]:
+                payeur=random.choice(listNomUsers)
+    else:
+        return "Semaine 9 pas de payeur, relancer le code"
+
+    dicoCompteur[payeur] = dicoCompteur[payeur] + 1
+    listePayeurs.append(payeur)
+    print(listePayeurs)
+    print(dicoCompteur)
+    print(i)
+    listCompteurCoffee = []
+    for c in dicoCompteur:
+        cpt = dicoCompteur.get(c)
+        listCompteurCoffee.append(cpt)
+    if i not in listCompteurCoffee:
+        i +=1
+    listNomUsers = []
+
+###semaine 10
     for u in users:
-        #print(u.items[0].Semaine_8)
-        if cpt!=0 and ((cpt % nombreSemaines) == 0 or (nombreSemaines % cpt) == 0):
-            i=+1
-        if u.items[0].Semaine_8 == 1 and dico[u.nom]==i:
-            listNomUsers_S8.append(u.nom)
-    payeur_S8 = random.choice(listNomUsers_S8)
-    dico[payeur_S8] = dico[payeur_S8] + 1
-    print(dico, payeur_S8)
-    listePayeur.append(payeur_S8)
-    cpt = +1
+        if u.items[0].Semaine_10 == 1 and dicoCompteur[u.nom] <= i:
+            listNomUsers.append(u.nom)
+    print(listNomUsers)
 
-    for u in users:
-        #print(u.items[0].Semaine_9)
-        if cpt!=0 and ((cpt % nombreSemaines) == 0 or (nombreSemaines % cpt) == 0):
-            i=+1
-        if u.items[0].Semaine_9 == 1 and dico[u.nom]==i:
-            listNomUsers_S9.append(u.nom)
-    payeur_S9 = random.choice(listNomUsers_S9)
-    dico[payeur_S9] = dico[payeur_S9] + 1
-    print(dico, payeur_S9)
-    listePayeur.append(payeur_S9)
-    cpt = +1
+    if listNomUsers == []:
+        i+=2
+        for u in users:
+            if u.items[0].Semaine_10== 1 and dicoCompteur[u.nom] <= i:
+                listNomUsers.append(u.nom)
+        i-=2
 
-    for u in users:
-        #print(u.items[0].Semaine_10)
-        if cpt!=0 and ((cpt % nombreSemaines) == 0 or (nombreSemaines % cpt) == 0):
-            i=+1
-        if u.items[0].Semaine_10 == 1 and dico[u.nom]==i:
-            listNomUsers_S10.append(u.nom)
-    payeur_S10 = random.choice(listNomUsers_S10)
-    dico[payeur_S10] = dico[payeur_S10] + 1
-    print(dico, payeur_S10)
-    listePayeur.append(payeur_S10)
-    cpt = +1
+    if listNomUsers!=[]:
+        payeur=random.choice(listNomUsers)
+        if payeur==listePayeurs[len(listePayeurs)-1] and len(listNomUsers)!=1: ## evite qu'un utilisateur paye 2 fois de suite
+            while payeur==listePayeurs[len(listePayeurs)-1]:
+                payeur=random.choice(listNomUsers)
+    else:
+        return "Semaine 10 pas de payeur, relancer le code"
 
-    print(dico)
+    dicoCompteur[payeur] = dicoCompteur[payeur] + 1
+    listePayeurs.append(payeur)
+    print(listePayeurs)
+    print(dicoCompteur)
+    print(i)
+    listCompteurCoffee = []
+    for c in dicoCompteur:
+        cpt = dicoCompteur.get(c)
+        listCompteurCoffee.append(cpt)
+    if i not in listCompteurCoffee:
+        i = +1
+    listNomUsers = []
 
+    print(dicoCompteur)
 
-    @app.put("/users/", response_model=List[schemas.User])
-    def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-        users = crud.get_users(db, skip=skip, limit=limit)
-        print(len(users), users[0].nom, users[0].items[0].Semaine_1)
-        return users
-    #print(users[0].nom)
-
-
-    return f"les  payeurs sont {listePayeur}"
+    return f"les  payeurs classés dans l'orde des semaines sont {listePayeurs}"
 
 
 
